@@ -18,7 +18,7 @@ class Task(BaseModel):
     title : str
     description : Optional[str] = None
     priority : int = Field(..., ge = 1, le = 5) # entre 1-5, min_length y max_length tmb
-    complete : bool = False # por defecto está en falso
+    completed : bool = False # por defecto está en falso
 
 class TaskCreate(BaseModel):
     title : str
@@ -35,7 +35,7 @@ async def create_Task(payload : TaskCreate):
         title = payload.title,
         description = payload.description,
         priority = payload.priority,
-        complete = False
+        completed = False
     )
     
     tasks_repertory[task_id] = task
@@ -60,7 +60,7 @@ async def get_Task(task_id : str):
 
 @router.get("/")
 async def getListTask(
-    complete : Optional[bool] = Query(default = None),
+    completed : Optional[bool] = Query(default = None),
     min_priority : Optional[int] = Query(default = None, ge = 1, le = 5)
     #,
     #skip : Optional[int] = Query(default = 0, ge = 0),
@@ -70,11 +70,11 @@ async def getListTask(
     # Tenemos que recorrer la lista
     for t in tasks_repertory.values() :
         tasks.append(t)
-    if complete != None :
+    if completed != None :
         # Queremos mantener la tarea en el mismo arreglo
         filterTasks = []
         for t in tasks:
-            if t.complete == complete : 
+            if t.completed == completed : 
                 filterTasks.append(t)
         tasks = filterTasks
     
